@@ -1,0 +1,39 @@
+/**
+ * Nocturne — L3 free-selector patches.
+ *
+ * Everything here either repairs a site the gradient-valued bg-base token
+ * cannot reach, or needs a CSS-Modules hash the semantic adapter does not
+ * cover. Selectors are written WITHOUT any `html[data-dsh-skin]` head: the
+ * loader force-prefixes every one of them, so a hand-written scope head would
+ * be doubled and never match.
+ */
+
+/* ---- 1. Left navigation gradient, hash-class fallback -------------------
+   skin.css paints the column through the skin-center semantic anchor. If a
+   shell ever places the `sidebar` slot outlet on an inner wrapper rather than
+   the column itself, this rule is what keeps the gradient on the column. */
+body [class*="sidebarCol"] {
+  background-image: linear-gradient(
+    to bottom left,
+    rgba(21, 85, 154, 1) 0%,
+    rgba(28, 28, 28, 1) 50%,
+    rgba(74, 34, 93, 1) 100%
+  );
+}
+
+/* ---- 2. Code-block sticky banner -----------------------------------------
+   `.bannerWrap` is one of only two places in the shell that consumes
+   bg-base through `background-color`, which cannot hold a gradient and would
+   drop to transparent. Restate it as a solid layer color. */
+body [class*="bannerWrap"] {
+  background-color: rgba(255, 255, 255, 0.04);
+}
+
+/* ---- 3. Focus ring -------------------------------------------------------
+   The official rule is `html[data-input-modality=pointer] body
+   :focus-visible:not(:read-write)`, which ties on specificity with anything a
+   skin can write at the same nesting. !important on the custom property is
+   what makes the accent ring win regardless of stylesheet order. */
+body :focus-visible {
+  --dsw-focus-ring-color: rgba(74, 163, 224, 0.9) !important;
+}

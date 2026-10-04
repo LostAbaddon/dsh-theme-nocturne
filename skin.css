@@ -1,0 +1,278 @@
+/**
+ * Nocturne (夜曲) — L1 token remap + L2 semantic surfaces.
+ *
+ * The official shell declares EVERY --dsw-* token on `body`, not `:root`.
+ * The skin loader clones only `--dsw-alias-*` / `--dsw-specific-*` from a
+ * bare `:root` down to body, so anything outside those two prefixes written
+ * at `:root` would lose to body's own definition. Everything is therefore
+ * declared on `body, body[data-ds-dark-theme]` — one block, both modes.
+ *
+ * This is a dark palette by construction, so light and dark carry the same
+ * values: the app's mode toggle cannot push the shell back to a light look.
+ *
+ * No @keyframes, no url(), no hooks. L3 repairs live in patches.css.
+ */
+
+/* ==========================================================================
+   Palette primitives
+   sidebar  : rgba(21,85,154,1) -> rgba(28,28,28,1) -> rgba(74,34,93,1)
+   main area: rgba(15,20,35,1)  -> rgba(10,20,17,1) -> rgba(19,17,36,1)
+   border   : rgba(226,225,228,1)
+   ========================================================================== */
+
+body,
+body[data-ds-dark-theme] {
+  /* ---- surfaces ------------------------------------------------------- */
+  /* The main-area gradient lives here: the page canvas, the layout center
+     column and the conversation root all read bg-base as `background`, so one
+     declaration covers the whole theme region. The three stops sit within
+     ~9 levels of each other in luminance, so surfaces that reuse bg-base at
+     small size (composer editor, attachment chips, sticky rows) still read as
+     flat near-black. patches.css repairs the two `background-color` sites. */
+  --dsw-alias-bg-base: linear-gradient(
+    to bottom left,
+    rgba(7, 10, 17, 1.0) 0%,
+    rgba(5, 10, 8, 1.0) 30%,
+    rgba(2, 2, 3, 1.0) 65%,
+    rgba(9, 8, 18, 1.0) 100%
+  );
+  --dsw-alias-bg-layer-1: rgba(255, 255, 255, 0.04);
+  --dsw-alias-bg-layer-2: rgba(255, 255, 255, 0.07);
+  --dsw-alias-bg-layer-3: rgba(255, 255, 255, 0.1);
+  --dsw-alias-bg-layer-4: rgba(255, 255, 255, 0.14);
+  --dsw-alias-bg-overlay: rgba(20, 25, 42, 0.92);
+  --dsw-alias-bg-skeleton: rgba(255, 255, 255, 0.06);
+  --dsw-alias-bg-module-platform: rgba(255, 255, 255, 0.03);
+  --dsw-alias-bg-multi-select: rgba(74, 163, 224, 0.18);
+  --dsw-alias-bg-document-preview: rgba(255, 255, 255, 0.04);
+  --dsw-alias-bg-document-selection: rgba(74, 163, 224, 0.32);
+  --dsw-alias-bg-mask-1: rgba(8, 11, 20, 0.68);
+  --dsw-alias-bg-mask-2: rgba(8, 11, 20, 0.78);
+  --dsw-alias-bg-mask-3: rgba(8, 11, 20, 0.88);
+  --dsw-alias-bg-mask-drop: rgba(6, 8, 14, 0.55);
+  --dsw-alias-bg-mask-photo: rgba(6, 8, 14, 0.42);
+
+  /* ---- borders -------------------------------------------------------- */
+  /* One value across every level, exactly as specified. l1..l4 stop
+     expressing a hierarchy; see patches.css for the one-token dial-down. */
+  --dsw-alias-border-l1: rgba(147, 181, 207, 1.0);
+  --dsw-alias-border-l2: rgba(186, 204, 217, 0.7);
+  --dsw-alias-border-l2-darkmode-thin: rgba(22, 97, 171, 1.0);
+  --dsw-alias-border-l3: rgba(21, 36, 53, 1.0);
+  --dsw-alias-border-l4: rgba(8, 8, 8, 1.0);
+  --dsw-alias-border-inverted: rgba(15, 20, 35, 1);
+  --dsw-alias-border-inverted2: rgba(10, 20, 17, 1);
+
+  /* ---- brand + link --------------------------------------------------- */
+  --dsw-alias-brand-primary: #4aa3e0;
+  --dsw-alias-brand-primary-invert: #0a1421;
+  --dsw-alias-brand-primary-new-colorprimary-new-color: #4aa3e0;
+  --dsw-alias-brand-text: #bbd9f2;
+  --dsw-alias-link: #6fb6e8;
+
+  /* ---- labels --------------------------------------------------------- */
+  --dsw-alias-label-primary: #e9eaf0;
+  --dsw-alias-label-primary-bluish: #cfe0f2;
+  --dsw-alias-label-primary-dimmed: #b9bdc9;
+  --dsw-alias-label-primary-foreground: #f2f8fd;
+  --dsw-alias-label-primary-inverted: #0f1423;
+  --dsw-alias-label-secondary: #a7adbc;
+  --dsw-alias-label-tertiary: #7a8090;
+  --dsw-alias-label-dimmed: #5c6270;
+  --dsw-alias-label-caption: #474d59;
+  --dsw-alias-label-error: #f08a8a;
+  --dsw-alias-label-document-preview: #a7adbc;
+  --dsw-alias-label-deep-diving: #4aa3e0;
+  --dsw-alias-label-deep-diving-shimmer: rgba(74, 163, 224, 0.55);
+
+  /* ---- interactive ---------------------------------------------------- */
+  --dsw-alias-interactive-bg-hover: rgba(255, 255, 255, 0.06);
+  --dsw-alias-interactive-bg-active: rgba(255, 255, 255, 0.11);
+  --dsw-alias-interactive-bg-hover-accent: rgba(74, 163, 224, 0.16);
+  --dsw-alias-interactive-bg-hover-danger: rgba(240, 138, 138, 0.16);
+  --dsw-alias-interactive-bg-hover-solid: rgba(255, 255, 255, 0.12);
+
+  /* ---- buttons -------------------------------------------------------- */
+  /* The primary set is declared whole (fill / hover / dimmed / foreground);
+     brand-primary is an accent token, never a button fill. */
+  --dsw-alias-button-primary-fill: #2f7fc4;
+  --dsw-alias-button-primary-hover: #3e92d8;
+  --dsw-alias-button-primary-dimmed: rgba(47, 127, 196, 0.45);
+  --dsw-alias-button-contrast-fill: #e9eaf0;
+  --dsw-alias-button-elevated-fill: rgba(255, 255, 255, 0.1);
+  --dsw-alias-button-floating-fill: rgba(20, 25, 42, 0.92);
+  --dsw-alias-button-floating-hover: rgba(30, 38, 60, 0.96);
+  --dsw-alias-button-info-fill: #1f5f92;
+  --dsw-alias-button-info-hover: #2a76b4;
+  --dsw-alias-button-tool-bar-fill: rgba(255, 255, 255, 0.06);
+  --dsw-alias-button-tool-bar-fill-invisible: rgba(255, 255, 255, 0.03);
+  --dsw-alias-button-tool-bar-hover: rgba(255, 255, 255, 0.1);
+  --dsw-alias-button-ghost-active-fill: rgba(74, 163, 224, 0.16);
+  --dsw-alias-button-ghost-active-hover: rgba(74, 163, 224, 0.24);
+  --dsw-alias-button-ghost-active-border: rgba(226, 225, 228, 1);
+
+  /* ---- semantic states ------------------------------------------------ */
+  --dsw-alias-state-error-primary: #f07272;
+  --dsw-alias-state-error-secondary: #efa0a0;
+  --dsw-alias-state-warn-primary: #e0a85c;
+  --dsw-alias-state-warn-secondary: #efc98a;
+  --dsw-alias-state-warn-tertiary: #c98a3c;
+  --dsw-alias-state-warn-label: #f2d9a8;
+  --dsw-alias-state-success-primary: #4fc98c;
+  --dsw-alias-state-success-secondary: #8adcb0;
+  --dsw-alias-state-success-tertiary: #3ea574;
+  --dsw-alias-state-idle-primary: #8a90a0;
+  --dsw-alias-state-business-primary: rgba(143, 178, 201, 1.0);
+  --dsw-alias-state-business-tertiary: #2f6fa8;
+
+  /* ---- markdown ------------------------------------------------------- */
+  --dsw-alias-markdown-code-block: rgba(255, 255, 255, 0.04);
+  --dsw-alias-markdown-code-block-banner: rgba(255, 255, 255, 0.07);
+  --dsw-alias-markdown-code-segment-selected: rgba(74, 163, 224, 0.22);
+  --dsw-alias-markdown-code-segment-unselected: rgba(255, 255, 255, 0.04);
+  --dsw-alias-markdown-inline-code: rgba(74, 163, 224, 0.14);
+  --dsw-alias-markdown-placeholder: rgba(233, 234, 240, 0.32);
+  --dsw-alias-markdown-tag: rgba(74, 163, 224, 0.18);
+  --dsw-alias-markdown-citation: rgba(111, 182, 232, 0.24);
+
+  /* ---- code diff ------------------------------------------------------ */
+  --dsw-alias-code-diff-added: #4fc98c;
+  --dsw-alias-code-diff-deleted: #f07272;
+  --dsw-alias-file-diff-added-bg: rgba(79, 201, 140, 0.12);
+  --dsw-alias-file-diff-added-gutter: rgba(79, 201, 140, 0.22);
+  --dsw-alias-file-diff-added-marker: #4fc98c;
+  --dsw-alias-file-diff-deleted-bg: rgba(240, 114, 114, 0.12);
+  --dsw-alias-file-diff-deleted-gutter: rgba(240, 114, 114, 0.22);
+  --dsw-alias-file-diff-deleted-marker: #f07272;
+
+  /* ---- scrollbars ----------------------------------------------------- */
+  --dsw-alias-scrollbar-bg-l1: rgba(226, 225, 228, 0.06);
+  --dsw-alias-scrollbar-bg-l2: rgba(226, 225, 228, 0.1);
+  --dsw-alias-scrollbar-hover-l1: rgba(226, 225, 228, 0.2);
+  --dsw-alias-scrollbar-hover-l2: rgba(226, 225, 228, 0.3);
+
+  /* ---- shell-specific ------------------------------------------------- */
+  /* Deliberately SOLID. macOS paints the sidebar with
+     `color-mix(... var(--dsw-specific-sidebar-fill) ...)`; a gradient here
+     would invalidate that whole declaration and drop the column to
+     transparent. The gradient is painted by selector in patches.css. */
+  --dsw-specific-sidebar-fill: #000000;
+  --dsw-specific-sidebar-nav-item-hover: rgba(255, 255, 255, 0.1);
+  --dsw-specific-sidebar-nav-item-active: rgba(255, 255, 255, 0.16);
+  --dsw-specific-sidebar-nav-item-active-accent: #4aa3e0;
+  --dsw-specific-bubble: rgba(255, 255, 255, 0.05);
+  --dsw-specific-bubble-highlight: rgba(74, 163, 224, 0.14);
+  --dsw-specific-input-major: rgba(18, 23, 38, 0.72);
+  --dsw-specific-login-input: rgba(18, 23, 38, 0.72);
+  --dsw-specific-menu: rgba(20, 25, 42, 0.92);
+  --dsw-specific-selector: rgba(255, 255, 255, 0.1);
+  --dsw-specific-tip: rgba(20, 25, 42, 0.94);
+
+  /* ---- overlays, menus, settings -------------------------------------- */
+  --dsw-alias-toast-bg: rgba(20, 25, 42, 0.96);
+  --dsw-alias-toast-label: #e9eaf0;
+  --dsw-alias-tooltip-bg: rgba(26, 32, 52, 0.98);
+  --dsw-alias-tooltip-key-bg: rgba(255, 255, 255, 0.1);
+  --dsw-alias-settings-card-fill: rgba(255, 255, 255, 0.04);
+  --dsw-alias-settings-card-stroke: rgba(226, 225, 228, 1);
+  --dsw-alias-switch-thumb: #e9eaf0;
+  --dsw-alias-turn-trigger-bg: rgba(74, 163, 224, 0.14);
+  --dsw-alias-turn-trigger-bg-hover: rgba(74, 163, 224, 0.24);
+  --dsw-alias-onboarding-accent: #4aa3e0;
+  --dsw-alias-onboarding-card-fill: rgba(255, 255, 255, 0.04);
+  --dsw-alias-onboarding-secondary-fill: rgba(255, 255, 255, 0.06);
+  --dsw-alias-onboarding-checkbox-border: rgba(226, 225, 228, 0.6);
+  --dsw-menu-surface-fill: rgba(20, 25, 42, 0.92);
+  --dsw-menu-group-header-fill: rgba(255, 255, 255, 0.06);
+  --dsw-menu-icon: #a7adbc;
+  --dsw-focus-ring-color: rgba(74, 163, 224, 0.9);
+  --dsw-desktop-window-tint: rgba(15, 20, 35, 0.55);
+
+  /* ---- elevation + blur (non-alias prefixes stay on body too) ---------- */
+  --dsw-shadow-lv1: 0 1px 2px 0 rgba(0, 0, 0, 0.45);
+  --dsw-shadow-lv1-blur: 0 4px 12px 0 rgba(0, 0, 0, 0.25);
+  --dsw-shadow-lv2: 0 4px 12px 0 rgba(0, 0, 0, 0.5), 0 2px 8px 0 rgba(0, 0, 0, 0.3);
+  --dsw-shadow-lv3: 0 12px 32px 0 rgba(0, 0, 0, 0.6);
+  --dsw-elevation-stroke-color: rgba(226, 225, 228, 1);
+  --dsw-elevation-panel: var(--dsw-elevation-stroke), 0 3px 8px 0 rgba(0, 0, 0, 0.4), 0 0 16px 0 rgba(0, 0, 0, 0.25);
+  --dsw-elevation-prominent: var(--dsw-elevation-stroke), 0 3px 8px 0 rgba(0, 0, 0, 0.45), 0 0 20px 0 rgba(0, 0, 0, 0.35);
+  --dsw-elevation-soft: var(--dsw-elevation-stroke), 0 4px 16px 0 rgba(0, 0, 0, 0.35), 0 0 24px 0 rgba(0, 0, 0, 0.3);
+  --dsw-menu-backdrop-filter: blur(40px) saturate(150%);
+  --dsw-mask-blur: blur(8px);
+}
+
+/* ==========================================================================
+   L2 — semantic surfaces
+   ========================================================================== */
+
+/* Page canvas. The official `body { background-color: var(--dsw-alias-bg-base) }`
+   cannot hold a gradient, so the base color is restated here and the gradient
+   is laid over it — the area outside the conversation column stays in palette. */
+body {
+  background-color: rgba(15, 20, 35, 1);
+  background-image: linear-gradient(
+    to bottom left,
+    rgba(15, 20, 35, 1) 0%,
+    rgba(10, 20, 17, 1) 50%,
+    rgba(19, 17, 36, 1) 100%
+  );
+  background-attachment: fixed;
+}
+
+/* Left navigation column. Anchored on the skin-center's own semantic
+   adapter output so no CSS-Modules hash is involved; patches.css carries a
+   hash-class fallback for shells where the slot outlet is not the column. */
+body [data-dsh-surface="sidebar"],
+body [data-slot="sidebar"] {
+  background-image: linear-gradient(
+    to bottom left,
+    rgba(21, 85, 154, 1) 0%,
+    rgba(28, 28, 28, 1) 50%,
+    rgba(74, 34, 93, 1) 100%
+  );
+}
+
+/* The right details column is part of the theme region, so it rides the main
+   gradient too, one layer darker than the conversation surface. */
+body [data-dsh-surface="details"],
+body [data-rightbar-col] {
+  background-image: linear-gradient(
+    to bottom left,
+    rgba(13, 17, 30, 1) 0%,
+    rgba(9, 17, 15, 1) 50%,
+    rgba(16, 14, 31, 1) 100%
+  );
+}
+
+/* ==========================================================================
+   Composer mask repair
+   官方 .ST7X_W_composerSeat 的遮罩用 color-mix() 读 --dsw-alias-bg-base，
+   而本皮肤把该 token 定义成 linear-gradient → color-mix() 失效 → 整条
+   background 在计算值阶段失效 → 席位全透明。必须 !important 接管：
+   无效声明的结果是 unset，不会回退到次高优先级的声明。
+   底色取主区渐变右下停靠色 rgba(19,17,36)，与卡片背后实际颜色一致。
+   data-phase="active" 为必须限定：hero / settling 态布局不同。
+   ========================================================================== */
+
+body [data-phase="active"] [data-composer-seat] {
+  background: linear-gradient(
+    180deg,
+    rgba(19, 17, 36, 0) 0px,
+    rgba(19, 17, 36, 0.35) 26px,
+    rgba(19, 17, 36, 0.4) 48px,
+    rgba(19, 17, 36, 0.6) 80px
+  ) !important;
+}
+
+body [data-composer-card] {
+  --dsw-elevation-stroke-color: rgba(74, 163, 224, 0.4);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.12),
+    var(--dsw-shadow-lv2);
+  background-image: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.06) 0%,
+    rgba(255, 255, 255, 0.015) 28%,
+    rgba(255, 255, 255, 0) 55%
+  );
+}
