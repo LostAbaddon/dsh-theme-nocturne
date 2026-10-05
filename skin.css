@@ -36,9 +36,9 @@ body[data-ds-dark-theme] {
     rgba(2, 2, 3, 1.0) 65%,
     rgba(9, 8, 18, 1.0) 100%
   );
-  --dsw-alias-bg-layer-1: rgba(255, 255, 255, 0.04);
+  --dsw-alias-bg-layer-1: rgba(23, 23, 23, 0.94);
   --dsw-alias-bg-layer-2: rgba(255, 255, 255, 0.07);
-  --dsw-alias-bg-layer-3: rgba(255, 255, 255, 0.1);
+  --dsw-alias-bg-layer-3: rgba(8, 8, 8, 0.4);
   --dsw-alias-bg-layer-4: rgba(255, 255, 255, 0.14);
   --dsw-alias-bg-overlay: rgba(20, 25, 42, 0.92);
   --dsw-alias-bg-skeleton: rgba(255, 255, 255, 0.06);
@@ -59,7 +59,7 @@ body[data-ds-dark-theme] {
   --dsw-alias-border-l2: rgba(186, 204, 217, 0.7);
   --dsw-alias-border-l2-darkmode-thin: rgba(22, 97, 171, 1.0);
   --dsw-alias-border-l3: rgba(21, 36, 53, 1.0);
-  --dsw-alias-border-l4: rgba(8, 8, 8, 1.0);
+  --dsw-alias-border-l4: rgba(53, 53, 53, 0.6);
   --dsw-alias-border-inverted: rgba(15, 20, 35, 1);
   --dsw-alias-border-inverted2: rgba(10, 20, 17, 1);
 
@@ -76,7 +76,7 @@ body[data-ds-dark-theme] {
   --dsw-alias-label-primary-dimmed: #b9bdc9;
   --dsw-alias-label-primary-foreground: #f2f8fd;
   --dsw-alias-label-primary-inverted: #0f1423;
-  --dsw-alias-label-secondary: #a7adbc;
+  --dsw-alias-label-secondary: rgba(147, 181, 207, 1.0);
   --dsw-alias-label-tertiary: #7a8090;
   --dsw-alias-label-dimmed: #5c6270;
   --dsw-alias-label-caption: #474d59;
@@ -114,10 +114,10 @@ body[data-ds-dark-theme] {
   /* ---- semantic states ------------------------------------------------ */
   --dsw-alias-state-error-primary: #f07272;
   --dsw-alias-state-error-secondary: #efa0a0;
-  --dsw-alias-state-warn-primary: #e0a85c;
-  --dsw-alias-state-warn-secondary: #efc98a;
-  --dsw-alias-state-warn-tertiary: #c98a3c;
-  --dsw-alias-state-warn-label: #f2d9a8;
+  --dsw-alias-state-warn-primary: rgba(147, 181, 207, 1.0);
+  --dsw-alias-state-warn-secondary: rgba(86, 152, 195, 1.0);
+  --dsw-alias-state-warn-tertiary: rgba(36, 128, 103, 1.0);
+  --dsw-alias-state-warn-label: rgba(27, 167, 132, 1.0);
   --dsw-alias-state-success-primary: #4fc98c;
   --dsw-alias-state-success-secondary: #8adcb0;
   --dsw-alias-state-success-tertiary: #3ea574;
