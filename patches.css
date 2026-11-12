@@ -37,3 +37,15 @@ body [class*="bannerWrap"] {
 body :focus-visible {
   --dsw-focus-ring-color: rgba(74, 163, 224, 0.9) !important;
 }
+
+/* ---- 4. Sidebar root fill ------------------------------------------------
+   The shell paints the sidebar's own root element (the single child of the
+   `data-dsh-surface="sidebar"` slot outlet) with
+   `background: var(--dsw-specific-sidebar-fill)`. That solid fill sits above
+   the gradient and hides it. The token stays solid for the other surfaces
+   that read it (table headers, notices, drag preview), so the root alone is
+   cleared and the semantic gradient in skin.css shows through. */
+
+body [data-dsh-surface="sidebar"] > :first-child {
+  background: transparent;
+}

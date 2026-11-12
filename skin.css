@@ -37,7 +37,13 @@ body[data-ds-dark-theme] {
     rgba(9, 8, 18, 1.0) 100%
   );
   --dsw-alias-bg-layer-1: rgba(23, 23, 23, 0.94);
-  --dsw-alias-bg-layer-2: rgba(255, 255, 255, 0.07);
+  /* SOLID, not a translucent white. The skin center paints the settings modal
+     with `rgb(from var(--dsw-alias-bg-layer-2) r g b / 1)`, which keeps the
+     RGB and forces alpha to 1: a translucent value would flatten to opaque
+     white and put light labels on a white panel. Every other surface that
+     reads layer-2 (cards, pills, menus) also lands on a dark backdrop, so one
+     solid value serves both. */
+  --dsw-alias-bg-layer-2: rgb(23, 26, 36);
   --dsw-alias-bg-layer-3: rgba(8, 8, 8, 0.4);
   --dsw-alias-bg-layer-4: rgba(255, 255, 255, 0.14);
   --dsw-alias-bg-overlay: rgba(20, 25, 42, 0.92);

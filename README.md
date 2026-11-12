@@ -11,6 +11,8 @@ DSH Web GUI 的深色皮肤。左侧导航自右上向左下倾泻蓝—墨—�
 | 左侧导航 | `rgba(21, 85, 154, 1)` → `rgba(28, 28, 28, 1)` → `rgba(74, 34, 93, 1)` |
 | 主区 | `rgba(15, 20, 35, 1)` → `rgba(10, 20, 17, 1)` → `rgba(19, 17, 36, 1)` |
 
+设置面板：`rgb(23, 26, 36)` 实色，与卡片、药丸、菜单共用 `bg-layer-2`。
+
 边框：`rgba(226, 225, 228, 1)`，统一覆盖 `border-l1` 至 `border-l4`。
 
 全部 token 写在 `body, body[data-ds-dark-theme]` 同一块内，亮暗两态同值——深色配色不受应用内明暗切换影响。
@@ -36,15 +38,19 @@ cp dsh-theme-nocturne/{skin.json,skin.css,patches.css} ~/.dsh/skins/nocturne/
 | --- | --- |
 | `skin.json` | v2 清单：id、名称、accent、`contributes.stylesheet` 与 `contributes.patches` |
 | `skin.css` | `--dsw-*` token 全量重映射 + L2 语义面规则（页面画布、左栏、右侧详情列、composer 席位遮罩、卡片高光） |
-| `patches.css` | 3 条 L3 修补：左栏 hash-class 兜底、代码块吸顶横幅补色、焦点环强调色 |
+| `patches.css` | 4 条 L3 修补：左栏 hash-class 兜底、左栏根节点填充清除、代码块吸顶横幅补色、焦点环强调色 |
 
-## 三处外壳约束
+## 外壳约束
 
 **token 定义在 `body` 而非 `:root`。** 外壳把每一个 `--dsw-*` 都声明在 `body` 上。皮肤加载器只把 `:root` 里的 `--dsw-alias-*` 与 `--dsw-specific-*` 克隆到 `body`，其余前缀不克隆——写在 `:root` 会被 `body` 自身的定义覆盖。
 
 **`color-mix()` 与 `background-color` 不接受渐变值。** 主区渐变放在 `--dsw-alias-bg-base` 上，而外壳有两处用 `color-mix()` 读取该 token：composer 席位遮罩与 plugin dock 遮罩。渐变值使整条声明在计算值阶段失效，结果是 `unset` 而非回退到次高优先级的声明，因此席位遮罩在 `skin.css` 中以 `!important` 接管。另有两处通过 `background-color` 消费同一 token（`body` 画布、代码块横幅），分别由显式声明与 `patches.css` 补齐。
 
-**macOS 的 `--dsw-specific-sidebar-fill` 只能是实色。** 官方在 `[data-platform=darwin]` 下用 `color-mix()` 包裹该 token 绘制整列，填入渐变会使整条 `background` 失效、侧栏透明。左栏渐变改由 `[data-dsh-surface="sidebar"]` 选择器绘制，`patches.css` 另有一条 hash-class 兜底。
+**设置面板把 `--dsw-alias-bg-layer-2` 当实色用。** 皮肤中心以 `rgb(from var(--dsw-alias-bg-layer-2, #ffffff) r g b / 1)` 给设置面板铺底：保留 RGB，把 alpha 强制为 1。半透明值会被压平成不透明色，`rgba(255, 255, 255, 0.07)` 直接变成纯白，浅色文字压在白面板上整块发灰。该 token 写成实色 `rgb(23, 26, 36)`，设置面板与卡片、药丸、菜单共用这一层色；面板内再用 `bg-layer-3` 等半透明层级做下沉，落在实色上不会失真。
+
+**左栏填充画在侧栏根节点上。** 外壳把 `--dsw-specific-sidebar-fill` 同时用于列（`sidebarCol`）与列内的侧栏根节点，根节点的实色会盖住列上的渐变。`patches.css` 只清掉根节点的背景，token 本身保持实色，供表头、提示条、拖拽预览继续使用；渐变由 `[data-dsh-surface="sidebar"]` 选择器绘制，另有一条 hash-class 兜底。
+
+**macOS 的 `--dsw-specific-sidebar-fill` 只能是实色。** 官方在 `[data-platform=darwin]` 下用 `color-mix()` 包裹该 token 绘制整列，填入渐变会使整条 `background` 失效、侧栏透明。
 
 ## 已知取舍
 
